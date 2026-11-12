@@ -1,0 +1,39 @@
+{
+  "name": "@aulasync/backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --project tsconfig.typecheck.json",
+    "test": "vitest run",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:check": "tsx prisma/verify-relations.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.0",
+    "dotenv": "^16.6.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.7.3",
+    "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
+    "pdfjs-dist": "^5.4.624",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.19.0",
+    "@types/node": "^22.19.0",
+    "@types/supertest": "^6.0.0",
+    "prisma": "6.19.0",
+    "supertest": "^7.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.12"
+  }
+}

@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoActividad {
+  TAREA
+  TRABAJO_PRACTICO
+  EXAMEN
+}
+
+enum TipoMaterial {
+  TEXTO
+  PDF
+}
+
+model Usuario {
+  id             String     @id @default(uuid()) @db.Uuid
+  nombre         String     @db.VarChar(100)
+  email          String     @unique @db.VarChar(254)
+  passwordHash   String
+  creadoEn       DateTime   @default(now())
+  actualizadoEn  DateTime   @updatedAt
+  materias       Materia[]
+  materiales     Material[]
+}
+
+model Materia {
+  id            String      @id @default(uuid()) @db.Uuid
+  nombre        String      @db.VarChar(120)
+  descripcion   String?     @db.VarChar(1000)
+  usuarioId     String      @db.Uuid
+  usuario       Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  actividades   Actividad[]
+  materiales    Material[]
+  creadoEn      DateTime    @default(now())
+  actualizadoEn DateTime    @updatedAt
+
+  @@unique([id, usuarioId])
+  @@index([usuarioId])
+}
+
+model Actividad {
+  id            String        @id @default(uuid()) @db.Uuid
+  titulo        String        @db.VarChar(200)
+  tipo          TipoActividad
+  fecha         DateTime      @db.Date
+  materiaId     String        @db.Uuid
+  materia       Materia       @relation(fields: [materiaId], references: [id], onDelete: Cascade)
+  creadoEn      DateTime      @default(now())
+  actualizadoEn DateTime      @updatedAt
+
+  @@index([materiaId, fecha])
+}
+
+model Material {
+  id            String       @id @default(uuid()) @db.Uuid
+  titulo        String       @db.VarChar(200)
+  tipo          TipoMaterial
+  contenido     String?      @db.Text
+  archivoClave  String?
+  archivoPdf    Bytes?
+  nombreArchivo String?
+  mimeType      String?
+  tamanoBytes   Int?
+  usuarioId     String       @db.Uuid
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  materiaId     String?      @db.Uuid
+  // FK compuesta: impide asociar una materia de otro estudiante.
+  materia       Materia?     @relation(fields: [materiaId, usuarioId], references: [id, usuarioId], onDelete: NoAction)
+  resumen       Resumen?
+  creadoEn      DateTime     @default(now())
+  actualizadoEn DateTime     @updatedAt
+
+  @@index([usuarioId])
+  @@index([materiaId, usuarioId])
+}
+
+model Resumen {
+  id            String   @id @default(uuid()) @db.Uuid
+  contenido     String   @db.Text
+  materialId    String   @unique @db.Uuid
+  material      Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  creadoEn      DateTime @default(now())
+}
+
+// Tabla tecnica: no incorpora un nuevo rol ni una entidad academica.
+model Sesion {
+  sid String @id
+  datos Json
+  expiraEn DateTime
+  @@index([expiraEn])
+}

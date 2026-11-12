@@ -1,0 +1,33 @@
+{
+  "name": "aulasync",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "db:generate": "npm run db:generate -w backend",
+    "db:validate": "npm run db:validate -w backend",
+    "db:migrate": "npm run db:migrate -w backend",
+    "db:seed": "npm run db:seed -w backend",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:local:start": "node scripts/postgres-local.mjs start",
+    "db:local:stop": "node scripts/postgres-local.mjs stop",
+    "db:local:status": "node scripts/postgres-local.mjs status",
+    "db:check": "npm run db:check -w backend",
+    "test:smoke": "npm test -w backend -- --configLoader native -t \"Sprint 6: recorrido HTTP integral\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "prettier": "^3.9.10"
+  }
+}
